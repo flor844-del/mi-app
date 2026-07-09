@@ -5,20 +5,20 @@ import { useState, useRef, useEffect } from "react";
 // TODO: Implementar sistema real de flashcards con spaced repetition algorithm
 
 const COLORS = {
-  primary: "#6B4EFF",
-  primaryLight: "#8B72FF",
-  primaryDark: "#4A2FE0",
-  secondary: "#F5A623",
-  accent: "#4CAF50",
-  bg: "#0F0D1A",
-  bgCard: "#1A1730",
-  bgCardLight: "#231F3A",
-  text: "#FFFFFF",
-  textSecondary: "#A89EC9",
-  textMuted: "#6B6485",
-  border: "#2A2545",
-  danger: "#FF5C5C",
-  gold: "#FFD700",
+  primary: "#C1622D",
+  primaryLight: "#D98A5C",
+  primaryDark: "#9B4A1F",
+  secondary: "#8A6D4F",
+  accent: "#4C7A6B",
+  bg: "#FAF6F0",
+  bgCard: "#FFFFFF",
+  bgCardLight: "#F2ECE2",
+  text: "#2A241D",
+  textSecondary: "#6B5D4F",
+  textMuted: "#A89882",
+  border: "#E8DFD1",
+  danger: "#D64545",
+  gold: "#D4A537",
 };
 
 const SCENES = [
@@ -137,8 +137,16 @@ export default function App() {
   ]);
   const [chatInput, setChatInput] = useState("");
   const [isAITyping, setIsAITyping] = useState(false);
+  const [toast, setToast] = useState(null);
   const recordingInterval = useRef(null);
   const chatEndRef = useRef(null);
+  const toastTimeout = useRef(null);
+
+  const showToast = (message) => {
+    clearTimeout(toastTimeout.current);
+    setToast(message);
+    toastTimeout.current = setTimeout(() => setToast(null), 2200);
+  };
 
   useEffect(() => {
     if (isRecording) {
@@ -1665,6 +1673,7 @@ export default function App() {
             ))}
             {plan.recommended && (
               <button
+                onClick={() => showToast("🚧 Suscripciones próximamente disponibles")}
                 style={{
                   ...styles.btn("primary"),
                   marginTop: 10,
@@ -1700,6 +1709,7 @@ export default function App() {
         ].map((item, i) => (
           <div
             key={item.label}
+            onClick={() => showToast(`🚧 "${item.label}" próximamente disponible`)}
             style={{
               display: "flex",
               alignItems: "center",
@@ -2018,6 +2028,30 @@ export default function App() {
 
       {/* New Note Modal */}
       {showNewNote && renderNewNoteModal()}
+
+      {/* Toast */}
+      {toast && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: 96,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: COLORS.text,
+            color: COLORS.bg,
+            padding: "10px 18px",
+            borderRadius: 12,
+            fontSize: 13,
+            fontWeight: 600,
+            zIndex: 400,
+            boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
+            whiteSpace: "nowrap",
+            animation: "fadeIn 0.2s ease",
+          }}
+        >
+          {toast}
+        </div>
+      )}
     </div>
   );
 }
